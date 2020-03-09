@@ -1,9 +1,15 @@
-interface Store {
+interface StringMap {
 	[k: string]: string;
 }
 
-export default (storeName: string) => {
-	const store: Store = {};
+export interface Store {
+  set: (key: string, secret: string) => Promise<void>,
+  get: (key: string) => Promise<string>,
+  remove: (key: string) => Promise<boolean>,
+}
+
+export default (storeName: string): Store => {
+	const store: StringMap = {};
 	return {
 		set: (key: string, secret: string): Promise<void> => {
 			store[key] = secret;
