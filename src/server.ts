@@ -7,21 +7,57 @@ import Bottleneck from 'bottleneck';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
-const debug = createDebugger('trello-clone');
+import passport from 'passport';
+import OAuth1Strategy from 'passport-oauth1';
 
 import mongoClient from './mongo-client';
 import { MongoClient } from 'mongodb';
 
+import request from 'superagent';
+
+const debug = createDebugger('trello-clone');
 const TOKEN_COLLECTION = 'tokens';
 
-['SESSION_SECRET', 'LIMIT_MAX_CONCURRENT', 'LIMIT_MIN_TIME_MS'].forEach((v) => {
-  if (!(v in process.env)) {
-    console.error(`Please provide a ${v} in your .env file.`);
-    process.exit(1);
-  }
-});
+['SESSION_SECRET', 'TRELLO_KEY', 'TRELLO_SECRET', 'LIMIT_MAX_CONCURRENT', 'LIMIT_MIN_TIME_MS']
+  .forEach((v) => {
+    if (!(v in process.env)) {
+      console.error(`Please provide a ${v} in your .env file.`);
+      process.exit(1);
+    }
+  });
 
 const app = express();
+
+passport.use(new OAuth1Strategy({
+    requestTokenURL: 'https://trello.com/1/OAuthGetRequestToken',
+    accessTokenURL: 'https://trello.com/1/OAuthGetAccessToken',
+    userAuthorizationURL: 'https://trello.com/1/OAuthAuthorizeToken',
+    consumerKey: process.env.TRELLO_KEY,
+    consumerSecret: process.env.TRELLO_SECRET,
+    callbackURL: `http://localhost:${process.env.PORT}/auth/callback`,
+    signatureMethod: 'HMAC-SHA1',
+  },
+  async (token: String, tokenSecret: String, _profile: any, cb: Function) => {
+    const response = await request.get('https://api.trello.com/1/members/me')
+      .query({
+        key: process.env.TRELLO_KEY,
+        token,
+      });
+
+    // TODO: save token + secret to mongo
+
+    cb(null, {
+      id: response.body.id,
+      token,
+    });
+  },
+));
+
+passport.serializeUser(({ id }, cb) =>
+  cb(null, id));
+
+passport.deserializeUser((id, cb) =>
+  cb(null, { id }));
 
 app.use(session({
   name: 'sid',
@@ -45,6 +81,9 @@ app.use(bodyParser.text({ type: "*/*" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 const limiter = new Bottleneck({
   maxConcurrent: +process.env.LIMIT_MAX_CONCURRENT,
   minTime: +process.env.LIMIT_MIN_TIME_MS,
@@ -56,7 +95,16 @@ app.get('/', (req, res) => {
   });
 });
 
-app.post('/authorize', (req, res) => {
+app.get('/auth/login', passport.authenticate('oauth'));
+app.get('/auth/callback', 
+  passport.authenticate('oauth', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  });
+
+
+app.post('/abcdef', (req, res) => {
   try {
     mongoClient((err: any, mongo: MongoClient) => {
       if (err) {

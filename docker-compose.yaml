@@ -1,6 +1,6 @@
 version: '3.6'
 services:
-  postgres:
+  mongo:
     image: mongo:4.2-bionic
     ports:
       - "${MONGO_PORT}:27017"
