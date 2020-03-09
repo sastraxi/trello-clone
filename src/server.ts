@@ -3,20 +3,25 @@ import 'dotenv/config';
 import createDebugger from 'debug';
 import express from 'express';
 import session from 'express-session';
-import Bottleneck from 'bottleneck';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-
 import passport from 'passport';
 import OAuth1Strategy from 'passport-oauth1';
 
-import mongoClient from './mongo-client';
-import { MongoClient } from 'mongodb';
+import pick from 'lodash.pick';
 
-import request from 'superagent';
+import SecretStore from './secret-store';
+import TrelloApi from './trello-api';
 
+const tokens = SecretStore('tokens');
 const debug = createDebugger('trello-clone');
-const TOKEN_COLLECTION = 'tokens';
+
+const PROFILE_FIELDS = [
+  'id',
+  'username',
+  'avatarUrl',
+  'fullName',
+];
 
 ['SESSION_SECRET', 'TRELLO_KEY', 'TRELLO_SECRET', 'LIMIT_MAX_CONCURRENT', 'LIMIT_MIN_TIME_MS']
   .forEach((v) => {
@@ -37,27 +42,23 @@ passport.use(new OAuth1Strategy({
     callbackURL: `http://localhost:${process.env.PORT}/auth/callback`,
     signatureMethod: 'HMAC-SHA1',
   },
-  async (token: String, tokenSecret: String, _profile: any, cb: Function) => {
-    const response = await request.get('https://api.trello.com/1/members/me')
-      .query({
-        key: process.env.TRELLO_KEY,
+  async (token: string, tokenSecret: string, _profile: any, cb: Function) => {
+    try {
+      await tokens.set(token, tokenSecret);
+      const trello = TrelloApi(token);
+      const profile = await trello.me();
+      cb(null, {
+        ...pick(profile, PROFILE_FIELDS),
         token,
       });
-
-    // TODO: save token + secret to mongo
-
-    cb(null, {
-      id: response.body.id,
-      token,
-    });
+    } catch (err) {
+      console.error('error in strategy', err);
+    }
   },
 ));
 
-passport.serializeUser(({ id }, cb) =>
-  cb(null, id));
-
-passport.deserializeUser((id, cb) =>
-  cb(null, { id }));
+passport.serializeUser((profile: object, cb) => cb(null, JSON.stringify(profile)));
+passport.deserializeUser((json: string, cb) => cb(null, JSON.parse(json)));
 
 app.use(session({
   name: 'sid',
@@ -84,11 +85,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-const limiter = new Bottleneck({
-  maxConcurrent: +process.env.LIMIT_MAX_CONCURRENT,
-  minTime: +process.env.LIMIT_MIN_TIME_MS,
-});
-
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 'Ready to build something awesome?',
@@ -103,66 +99,11 @@ app.get('/auth/callback',
     res.redirect('/');
   });
 
-
-app.post('/abcdef', (req, res) => {
-  try {
-    mongoClient((err: any, mongo: MongoClient) => {
-      if (err) {
-        console.error(err);
-      }
-    });
-  } catch (err) {
-    // TODO: debug(...)
-    console.error('Received error at top-level!', err);
-  }
+app.get('/boards', async (req, res) => {
+  const trello = TrelloApi(req.user.token);
+  return res.status(200).json(await trello.boards());
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port , () =>
-  console.log('trello-clone server running at http://localhost:' + port));
-
-/*
-try {
-  
-
-    app.post('/', async (req, res) => {
-      const body: string = Array.isArray(req.body) ? req.body.join('\n') : req.body;
-
-      const metrics = body.split('\n')
-        .filter(x => x.trim() !== '')
-        .map(x => JSON.parse(x));
-
-      if (await limiter.currentReservoir() < metrics.length) {
-        return res
-          .status(429)
-          .header('X-Rate-Limit-Remaining', `${await limiter.currentReservoir()}`)
-          .json({
-            status: 'Over rate limit!',
-          });
-      }
-
-      return limiter.schedule({ weight: metrics.length }, async () => {
-        try {
-          const db = mongo.db();
-          const collection = db.collection(TOKEN_COLLECTION);
-          const result = await collection.insertMany(metrics);
-          // TODO: debug(...)
-          console.log(`Inserted ${metrics.length} records!`);
-          return res
-            .status(200)
-            .header('X-Rate-Limit-Remaining', `${await limiter.currentReservoir()}`)
-            .json({
-              status: 'OK',
-              insert: metrics.length,
-            });
-        } catch (err) {
-          console.error('mongo', err);
-          return res.status(500).json({ status: 'Mongo errored out!' });
-        }
-      }).catch(console.error);
-    });
-
-  });
-} catch (err) {
-}
-*/
+app.listen(port, () =>
+  console.log(`visit http://localhost:${port}/auth/login to get started`));
