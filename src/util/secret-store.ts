@@ -1,5 +1,5 @@
 interface StringMap {
-	[k: string]: string;
+  [k: string]: string;
 }
 
 export interface Store {
@@ -9,22 +9,22 @@ export interface Store {
 }
 
 export default (storeName: string): Store => {
-	const store: StringMap = {};
-	return {
-		set: (key: string, secret: string): Promise<void> => {
-			store[key] = secret;
-			return Promise.resolve();
-		},
-		get: (key: string): Promise<string> => {
-			return Promise.resolve(store[key]);
-		},
-		remove: (key: string): Promise<boolean> => {
-			if (!(key in store)) {
-				return Promise.resolve(false);
-      }
+  const store: StringMap = {};
+  return {
+    set: (key: string, secret: string): Promise<void> => {
+      store[key] = secret;
+      return Promise.resolve();
+    },
+    get: (key: string): Promise<string> => {
+      return Promise.resolve(store[key]);
+    },
+    remove: (key: string): Promise<boolean> => {
+      if (!(key in store)) {
+        return Promise.resolve(false);
+    }
 
-      delete store[key];
-      return Promise.resolve(true);
-		},
-	};
+    delete store[key];
+    return Promise.resolve(true);
+    },
+  };
 };

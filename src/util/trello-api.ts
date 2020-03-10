@@ -21,8 +21,13 @@ export const boards = (token: string) => () =>
       token,
     })
     .then(r => r.body);
-  
-export default (token: string) => ({
+
+export interface TrelloApi {
+  me: () => any,
+  boards: () => any,
+}
+
+export default (token: string): TrelloApi => ({
   me: limiter.wrap(me(token)),
   boards: limiter.wrap(boards(token)),
 });

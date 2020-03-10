@@ -1,3 +1,5 @@
+import { TrelloApi } from "./util/trello-api";
+
 export interface User {
   id: string
   token: string
@@ -12,5 +14,6 @@ declare module 'http' {
   export interface IncomingMessage {
     user?: User
     session: Session
+    trello?: TrelloApi
   }
 }

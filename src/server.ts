@@ -3,10 +3,10 @@ import 'dotenv/config';
 import createDebugger from 'debug';
 
 import SecretStore from './util/secret-store';
-import TrelloApi from './util/trello-api';
 
 import setupAuth from './setup/auth';
 import setupExpress from './setup/express';
+import setupTrello from './setup/trello';
 
 const tokenStore = SecretStore('tokens');
 const debug = createDebugger('trello-clone');
@@ -21,6 +21,7 @@ const debug = createDebugger('trello-clone');
 
 const app = setupExpress();
 setupAuth(app, tokenStore);
+setupTrello(app);
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -29,8 +30,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/boards', async (req, res) => {
-  const trello = TrelloApi(req.user.token);
-  return res.status(200).json(await trello.boards());
+  return res.status(200).json(await req.trello.boards());
 });
 
 const port = process.env.PORT || 3000;
