@@ -1,4 +1,4 @@
-import { TrelloApi } from "./util/trello-api";
+import { TrelloApi } from "./util/trello";
 
 export interface User {
   id: string

@@ -1,8 +1,8 @@
-
 import express from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import mustacheExpress from 'mustache-express';
 
 export default () => {
 	const app = express();
@@ -27,7 +27,11 @@ export default () => {
 
 	app.use(bodyParser.text({ type: "*/*" }));
 	app.use(bodyParser.json());
-	app.use(bodyParser.urlencoded({ extended: true }));
-
+  app.use(bodyParser.urlencoded({ extended: true }));
+  
+  app.engine('mustache', mustacheExpress());
+  app.set('view engine', 'mustache');
+  app.use(express.static('public'))
+    
 	return app;
 };

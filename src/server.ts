@@ -23,10 +23,18 @@ const app = setupExpress();
 setupAuth(app, tokenStore);
 setupTrello(app);
 
+app.get('/home', (req, res) => {
+  res.render('home');
+});
+
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 'Ready to build something awesome?',
   });
+}); 
+
+app.get('/me', async (req, res) => {
+  return res.status(200).json(await req.trello.me());
 });
 
 app.get('/boards', async (req, res) => {
