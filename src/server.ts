@@ -53,10 +53,13 @@ app.post('/sync/new', async (req, res) => {
     target: targetId,
     label,
   } = req.body;
+  
+  if (sourceId === targetId) {
+    return res.status(400).send('Source and target must be distinct!');
+  }
 
   // FIXME: shouldn't have to keep re-fetching
   const boards = await req.trello.boards();
-  console.log(req.body);
   const source = boards.find(board => board.id === sourceId);
   const target = boards.find(board => board.id === targetId);
 
@@ -66,6 +69,20 @@ app.post('/sync/new', async (req, res) => {
     const sync = await Sync.create(source, target, [label]);
     console.log('created sync');
     console.log(JSON.stringify(sync, null, 2));
+  }
+  client.close();
+
+  // back home to see the new list of syncs
+  return res.redirect('/');
+});
+
+app.post('/sync/delete/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const client = await MongoClient();
+  {
+    const Sync = SyncModel(client.db());
+    await Sync.delete(id);
   }
   client.close();
 

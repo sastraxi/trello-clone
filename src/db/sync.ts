@@ -1,4 +1,4 @@
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { Board } from '../util/trello';
 
 const SYNC_COLLECTION = 'sync';
@@ -37,5 +37,10 @@ export default (db: Db) => ({
       labels,
       lastSync: null,
     };
+  },
+
+  delete: async (id: string): Promise<boolean> => {
+    const { deletedCount } = await db.collection(SYNC_COLLECTION).deleteOne({ _id: new ObjectId(id) });
+    return deletedCount === 1;
   },
 });
