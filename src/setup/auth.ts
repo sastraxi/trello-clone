@@ -1,5 +1,5 @@
 import passport from 'passport';
-import OAuth1Strategy from 'passport-oauth1';
+import { Strategy as TrelloStrategy } from 'passport-trello';
 import pick from 'lodash.pick';
 
 import TrelloApi from '../util/trello-api';
@@ -11,21 +11,23 @@ const PROFILE_FIELDS = [
   'username',
   'avatarUrl',
   'fullName',
-];  
+];
 
 export default (app: IRouter, tokenStore: Store) => {
   // set up our integration with Trello, and define what happens when Trello redirects back to us
-  passport.use(new OAuth1Strategy({
-      requestTokenURL: 'https://trello.com/1/OAuthGetRequestToken',
-      accessTokenURL: 'https://trello.com/1/OAuthGetAccessToken',
-      userAuthorizationURL: 'https://trello.com/1/OAuthAuthorizeToken',
+  passport.use(new TrelloStrategy({
       consumerKey: process.env.TRELLO_KEY,
       consumerSecret: process.env.TRELLO_SECRET,
       callbackURL: `http://localhost:${process.env.PORT}/auth/callback`,
-      signatureMethod: 'HMAC-SHA1',
+      trelloParams: {
+        scope: 'read,write',
+        name: 'trello-clone',
+        expiration: 'never',
+      }
     },
     async (token: string, tokenSecret: string, _profile: any, cb: Function) => {
       try {
+        // FIXME: _profile has me() in it so we don't need to call the API ourselves
         await tokenStore.set(token, tokenSecret);
         const trello = TrelloApi(token);
         const profile = await trello.me();
@@ -47,9 +49,9 @@ export default (app: IRouter, tokenStore: Store) => {
   app.use(passport.session());
 
   // auth routes
-  app.get('/auth/login', passport.authenticate('oauth'));
+  app.get('/auth/login', passport.authenticate('trello'));
   app.get('/auth/callback', 
-    passport.authenticate('oauth', { failureRedirect: '/login' }),
+    passport.authenticate('trello', { failureRedirect: '/login' }),
     function(req, res) {
       // Successful authentication, redirect home.
       res.redirect('/');

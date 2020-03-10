@@ -1,1 +1,1 @@
-declare module 'passport-oauth1';
+declare module 'passport-trello';

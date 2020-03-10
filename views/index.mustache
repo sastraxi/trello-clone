@@ -25,7 +25,10 @@
               <span>{{ . }}</span>
             {{ /labels }}
           </td>
-          <td>{{ lastSync }}</td>
+          <td>
+            {{ lastSync }}
+            {{ ^lastSync }}--{{ /lastSync }}
+          </td>
           <td>
             <form action="/sync/delete/{{ id }}" method="post">
               <input type="submit" value="Remove" />
