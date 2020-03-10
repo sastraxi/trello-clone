@@ -5,10 +5,10 @@ import cors from 'cors';
 import mustacheExpress from 'mustache-express';
 
 export default () => {
-	const app = express();
+  const app = express();
 
-	app.use(session({
-    name: 'sid',
+  app.use(session({
+    name: 'trello-clone.sid',
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -16,22 +16,20 @@ export default () => {
       maxAge: 1000 * 60 * 60 * 24 * 120,
     },
     rolling: true,
-	}));
+  }));
 
-	app.use(
+  app.use(
     cors({
       origin: true,
       credentials: true,
     }),
-	);
+  );
 
-	app.use(bodyParser.text({ type: "*/*" }));
-	app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   
   app.engine('mustache', mustacheExpress());
   app.set('view engine', 'mustache');
-  app.use(express.static('public'))
+  app.use(express.static('public'));
     
-	return app;
+  return app;
 };

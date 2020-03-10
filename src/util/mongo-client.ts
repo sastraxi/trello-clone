@@ -1,4 +1,4 @@
-import { MongoClient, MongoCallback } from 'mongodb';
+import { MongoClient } from 'mongodb';
 
 // generate database URL from environment
 let databaseUrl = process.env.MONGO_URI;
@@ -7,9 +7,9 @@ if (!databaseUrl) {
     `@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE}`;
 }
 
-export default (cb: MongoCallback<MongoClient>): void =>
+export default (): Promise<MongoClient> =>
   MongoClient.connect(databaseUrl, {
     authSource: process.env.MONGO_AUTH_DATABASE,
     useUnifiedTopology: true,
     useNewUrlParser: true,
-  }, cb);
+  });

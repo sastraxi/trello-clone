@@ -1,0 +1,31 @@
+html, body {
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
+  padding: 2rem;
+  color: #244555;
+}
+
+td.labels span + span:before {
+  content: ', ';
+}
+
+table td {
+  padding: 0.5rem 1rem;
+}
+
+table thead td {
+  font-weight: bold;
+  border-bottom: 1px dotted black;
+}
+
+table tbody tr + tr {
+  border-top: 1px dotted #244555;
+}
+
+table form {
+  display: inline-block;
+}

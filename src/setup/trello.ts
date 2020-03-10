@@ -8,6 +8,6 @@ export default (app: IRouter) =>
       return res.redirect('/auth/login');
     }
     req.trello = TrelloApi(req.user.token);
-    return next();  
+    return next();
   });
 

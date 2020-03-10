@@ -30,6 +30,7 @@ export const boards = (token: string) => (): Promise<Board[]> =>
         'name',
         'labelNames',
         'memberships',
+        'url',
       ])));
 
 export default (token: string): TrelloApi => ({

@@ -1,11 +1,42 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>title</title>
-    <link rel="stylesheet" href="/stylesheet.css" type="text/css">
-  </head>
-  <body>
-  
-  </body>
-</html>
+{{ >header }}
+
+  <h1>Trello Clone / Sync</h1>
+  <h3>Logged in as {{ user.username }}</h3>
+  <form action="/sync/new" method="get">
+    <input type="submit" value="Setup new sync" />
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <td>Sync</td>
+        <td>Label(s)</td>
+        <td>Last synced</td>
+        <td>Actions</td>
+      </tr>
+    </thead>
+    <tbody>
+      {{ #syncs }}
+        <tr>
+          <td>
+            <span>{{ source.name }}</span> → <span>{{ target.name }}</span>
+          </td>
+          <td class="labels">
+            {{ #labels }}
+              <span>{{ . }}</span>
+            {{ /labels }}
+          </td>
+          <td>{{ lastSync }}</td>
+          <td>
+            <form action="/sync/delete/{{ id }}" method="post">
+              <input type="submit" value="Remove" />
+            </form>
+            <form action="/sync/perform/{{ id }}" method="post">
+              <input type="submit" value="Sync now" />
+            </form>
+          </td>
+        </tr>
+      {{ /syncs }}
+    </tbody>
+  </table>
+
+{{ >footer }}

@@ -21,10 +21,9 @@ export default (storeName: string): Store => {
     remove: (key: string): Promise<boolean> => {
       if (!(key in store)) {
         return Promise.resolve(false);
-    }
-
-    delete store[key];
-    return Promise.resolve(true);
+      }
+      delete store[key];
+      return Promise.resolve(true);
     },
   };
 };
