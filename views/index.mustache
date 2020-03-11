@@ -18,7 +18,9 @@
       {{ #syncs }}
         <tr>
           <td>
-            <span>{{ source.name }}</span> → <span>{{ target.name }}</span>
+            <a href="{{ source.url }}">{{ source.name }}</a>
+            →
+            <a href="{{ target.url }}">{{ target.name }}</a>
           </td>
           <td class="labels">
             {{ #labels }}

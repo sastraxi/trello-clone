@@ -1,6 +1,6 @@
 import { IRouter } from "express";
 
-import TrelloApi from '../util/trello-api';
+import TrelloApi from '../trello';
 
 export default (app: IRouter) =>
   app.use((req, res, next) => {

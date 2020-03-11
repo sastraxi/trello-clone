@@ -2,7 +2,7 @@ import passport from 'passport';
 import { Strategy as TrelloStrategy } from 'passport-trello';
 import pick from 'lodash.pick';
 
-import TrelloApi from '../util/trello-api';
+import TrelloApi from '../trello';
 import { Store } from '../util/secret-store';
 import { IRouter } from 'express';
 

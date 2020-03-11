@@ -1,5 +1,5 @@
 import { Db, ObjectId } from 'mongodb';
-import { Board } from '../util/trello';
+import { Board } from '../trello/definitions';
 
 const SYNC_COLLECTION = 'sync';
 
