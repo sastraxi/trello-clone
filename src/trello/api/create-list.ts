@@ -10,7 +10,4 @@ export default (token: string) => (boardId: string, name: string, pos?: any): Pr
     idBoard: boardId,
     name,
     pos,
-  }).then(r => {
-    console.log('created list', r.body);
-    return r.body.id
-  });
+  }).then(r => r.body.id);

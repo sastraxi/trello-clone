@@ -10,8 +10,6 @@ export default (token: string) =>
       filter: 'all',
     }).then(res => res.body);
 
-    console.log(cards);
-
     const responses = await Promise.all(cards.map((card: Card) =>
       del(`https://api.trello.com/1/cards/${card.id}`, {
         key: process.env.TRELLO_KEY,
@@ -19,6 +17,5 @@ export default (token: string) =>
       })
     ));
 
-    console.log(JSON.stringify(responses, null, 2))
     return 0;
   };

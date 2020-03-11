@@ -23,7 +23,6 @@ export default (trello: TrelloApi) => async (sourceId: string, targetId: string,
   const sourceLists = await trello.lists(sourceBoard.id);
   const sourceListNames = sourceLists.map(l => l.name);
 
-  console.log(JSON.stringify(sourceLists, null, 2));
   await trello.deleteAllCards(targetBoard.id);
   
   const targetLists = await trello.lists(targetBoard.id);
@@ -57,134 +56,15 @@ export default (trello: TrelloApi) => async (sourceId: string, targetId: string,
       }))
     )
       .filter(card => some(card.labels, (label: any) => labelColours.indexOf(label.color) !== -1))
-      .map(card => trello.cloneCard(card.id, card.listId, [CardFacet.All]))
+      .map(card => trello.cloneCard(card.id, card.listId, [
+        CardFacet.attachments,
+        CardFacet.comments,
+        CardFacet.members,
+        CardFacet.checklists,
+        CardFacet.due,
+        CardFacet.stickers,
+      ]))
   );
 
   return true;
 };
-
-/**
-Syncing Eng Management (Private) to Eng Management (Public)...
-[
-  {
-    "id": "5e62bc38f432b31e229c9595",
-    "name": "Laccetti",
-    "cards": []
-  },
-  {
-    "id": "5e62bc2f1e52750f3a0df9a0",
-    "name": "Alex",
-    "cards": []
-  },
-  {
-    "id": "5e62bc2e260d208d0debefd1",
-    "name": "Cam",
-    "cards": [
-      {
-        "id": "5e62c40f40e7bf2a1acd224d",
-        "labels": []
-      },
-      {
-        "id": "5e67eb9c991ebf59aae29fb3",
-        "labels": []
-      },
-      {
-        "id": "5e62c416a9617d83cf8ff9cc",
-        "labels": [
-          {
-            "id": "5e62bc2baf988c41f2a5afcd",
-            "idBoard": "5e62bc2b1c038a4fe8cd958a",
-            "name": "Public",
-            "color": "green"
-          }
-        ]
-      },
-      {
-        "id": "5e62c4872c8bfa051a9477fa",
-        "labels": [
-          {
-            "id": "5e62bc2baf988c41f2a5afcd",
-            "idBoard": "5e62bc2b1c038a4fe8cd958a",
-            "name": "Public",
-            "color": "green"
-          }
-        ]
-      },
-      {
-        "id": "5e62c4ddea49c566b948ba00",
-        "labels": [
-          {
-            "id": "5e62bc2baf988c41f2a5afcd",
-            "idBoard": "5e62bc2b1c038a4fe8cd958a",
-            "name": "Public",
-            "color": "green"
-          }
-        ]
-      },
-      {
-        "id": "5e62c7d2b8ee217d5218812e",
-        "labels": []
-      },
-      {
-        "id": "5e62c7e5a5e0765290b25271",
-        "labels": [
-          {
-            "id": "5e62bc2baf988c41f2a5afcd",
-            "idBoard": "5e62bc2b1c038a4fe8cd958a",
-            "name": "Public",
-            "color": "green"
-          }
-        ]
-      },
-      {
-        "id": "5e6281ff3d9c86460f090cf2",
-        "labels": [
-          {
-            "id": "5e62bc2baf988c41f2a5afcd",
-            "idBoard": "5e62bc2b1c038a4fe8cd958a",
-            "name": "Public",
-            "color": "green"
-          }
-        ]
-      },
-      {
-        "id": "5e5fd993f43b981b933e66d9",
-        "labels": [
-          {
-            "id": "5e62bc2baf988c41f2a5afcd",
-            "idBoard": "5e62bc2b1c038a4fe8cd958a",
-            "name": "Public",
-            "color": "green"
-          }
-        ]
-      },
-      {
-        "id": "5e6165b57a72dd0ed6319570",
-        "labels": []
-      },
-      {
-        "id": "5e458d31c11b1f55e1e3d40d",
-        "labels": []
-      },
-      {
-        "id": "5e6004ad1c6e6348bb00b474",
-        "labels": []
-      },
-      {
-        "id": "5e5564bf0efcb24904a29624",
-        "labels": []
-      }
-    ]
-  },
-  {
-    "id": "5e62bc31f124c738b2617c40",
-    "name": "Asaf",
-    "cards": []
-  },
-  {
-    "id": "5e62bc33dbf60c3df2189040",
-    "name": "Bhavin",
-    "cards": []
-  }
-]
- */

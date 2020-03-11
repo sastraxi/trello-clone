@@ -3,12 +3,15 @@ export interface StringMap {
 }
 
 export enum CardFacet {
-  Attachments = "attachments",
-  Checklists = "checklists",
-  Comments = "comments",
-  Labels = "labels",
-  All = "all",
-  None = "none",
+  attachments = "attachments",
+  checklists = "checklists",
+  comments = "comments",
+  due = "due",
+  labels = "labels",
+  members = "members",
+  stickers = "stickers",
+  all = "all",
+  none = "none",
 }
 
 export interface Board {

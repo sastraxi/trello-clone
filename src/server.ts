@@ -13,7 +13,6 @@ import SyncModel from './db/sync';
 import CloneBoard from './task/clone-board';
 
 const tokenStore = SecretStore('tokens');
-const debug = createDebugger('trello-clone');
 
 ['SESSION_SECRET', 'TRELLO_KEY', 'TRELLO_SECRET', 'LIMIT_MAX_CONCURRENT', 'LIMIT_MIN_TIME_MS']
   .forEach((key) => {
@@ -67,9 +66,7 @@ app.post('/sync/new', async (req, res) => {
   const client = await MongoClient();
   {
     const Sync = SyncModel(client.db());
-    const sync = await Sync.create(source, target, [label]);
-    console.log('created sync');
-    console.log(JSON.stringify(sync, null, 2));
+    await Sync.create(source, target, [label]);
   }
   client.close();
 
@@ -122,4 +119,4 @@ app.get('/boards', async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () =>
-  console.log(`visit http://localhost:${port}/auth/login to get started`));
+  console.log(`visit http://localhost:${port} to get started`));
