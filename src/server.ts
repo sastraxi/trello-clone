@@ -10,6 +10,7 @@ import setupExpress from './setup/express';
 import setupTrello from './setup/trello';
 
 import SyncModel from './db/sync';
+import CloneBoard from './task/clone-board';
 
 const tokenStore = SecretStore('tokens');
 const debug = createDebugger('trello-clone');
@@ -72,7 +73,29 @@ app.post('/sync/new', async (req, res) => {
   }
   client.close();
 
-  // back home to see the new list of syncs
+  return res.redirect('/');
+});
+
+app.post('/sync/:id', async (req, res) => {
+  const { id } = req.params;
+  const cloneBoard = CloneBoard(req.trello);
+
+  const client = await MongoClient();
+  {
+    const Sync = SyncModel(client.db());
+    const sync = await Sync.get(id);
+    console.log(`Syncing ${sync.source.name} to ${sync.target.name}...`);
+    try {
+      await cloneBoard(sync.source.id, sync.target.id, sync.labels);
+      await Sync.touch(id);
+      console.log('Done!');
+    } catch (err) {
+      console.error(err);
+      console.log("error; see above");
+    }
+  }
+  client.close();
+
   return res.redirect('/');
 });
 
@@ -86,7 +109,6 @@ app.post('/sync/delete/:id', async (req, res) => {
   }
   client.close();
 
-  // back home to see the new list of syncs
   return res.redirect('/');
 });
 

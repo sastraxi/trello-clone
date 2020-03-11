@@ -1,4 +1,4 @@
-interface StringMap {
+export interface StringMap {
   [k: string]: string;
 }
 
@@ -30,4 +30,5 @@ export interface TrelloApi {
   archiveList: (listId: string) => Promise<void>,
   deleteAllCards: (boardId: string) => Promise<number>,
   cloneCard: (cardId: string, targetListId: string, cardFacets: CardFacet[]) => Promise<void>,
+  createList: (boardId: string, name: string, pos?: any) => Promise<string>,
 }

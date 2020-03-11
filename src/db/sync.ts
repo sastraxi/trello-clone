@@ -12,6 +12,14 @@ export interface Sync {
 }
 
 export default (db: Db) => ({
+  get: (id: string): Promise<Sync> =>
+    db.collection(SYNC_COLLECTION)
+      .findOne({ _id: new ObjectId(id) })
+      .then(({ _id, ...doc }) => ({
+        id: _id,
+        ...doc,
+      })),
+
   all: (): Promise<Sync[]> =>
     db.collection(SYNC_COLLECTION)
       .find()
@@ -43,4 +51,11 @@ export default (db: Db) => ({
     const { deletedCount } = await db.collection(SYNC_COLLECTION).deleteOne({ _id: new ObjectId(id) });
     return deletedCount === 1;
   },
+
+  touch: async (id: string): Promise<number> =>
+    db.collection(SYNC_COLLECTION)
+      .updateOne(
+        { _id: new ObjectId(id) },
+        { $currentDate: { lastSync: true } },
+      ).then(r => r.modifiedCount),
 });

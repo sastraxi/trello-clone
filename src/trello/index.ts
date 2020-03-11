@@ -6,6 +6,7 @@ import lists from './api/lists';
 import archiveList from './api/archive-list';
 import deleteAllCards from './api/delete-all-cards';
 import cloneCard from './api/clone-card';
+import createList from './api/create-list';
 
 export default (token: string): TrelloApi => ({
   me: me(token),
@@ -14,4 +15,5 @@ export default (token: string): TrelloApi => ({
   archiveList: archiveList(token),
   deleteAllCards: deleteAllCards(token),
   cloneCard: cloneCard(token),
+  createList: createList(token),
 });

@@ -7,5 +7,5 @@ export default (token: string) => (boardId: string): Promise<any[]> =>
     cards: 'open',
     card_fields: 'id,labels',
     filter: 'open',
-    fields: 'name',
+    fields: 'name,pos',
   }).then(r => r.body);
