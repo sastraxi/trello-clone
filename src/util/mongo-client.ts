@@ -1,15 +1,15 @@
 import { MongoClient } from 'mongodb';
 
 // generate database URL from environment
-let databaseUrl = process.env.MONGO_URI;
-if (!databaseUrl) {
-  databaseUrl = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}` +
+export const databaseUrl = process.env.MONGO_URI ||
+  `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}` +
     `@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE}`;
-}
+
+export const connectionOptions = {
+  authSource: process.env.MONGO_AUTH_DATABASE,
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+};
 
 export default (): Promise<MongoClient> =>
-  MongoClient.connect(databaseUrl, {
-    authSource: process.env.MONGO_AUTH_DATABASE,
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-  });
+  MongoClient.connect(databaseUrl, connectionOptions);

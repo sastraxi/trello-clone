@@ -1,7 +1,5 @@
 import 'dotenv/config';
 
-import createDebugger from 'debug';
-
 import SecretStore from './util/secret-store';
 import MongoClient from './util/mongo-client';
 
@@ -14,7 +12,14 @@ import CloneBoard from './task/clone-board';
 
 const tokenStore = SecretStore('tokens');
 
-['SESSION_SECRET', 'TRELLO_KEY', 'TRELLO_SECRET', 'LIMIT_MAX_CONCURRENT', 'LIMIT_MIN_TIME_MS']
+[
+  'SESSION_SECRET',
+  'TRELLO_KEY',
+  'TRELLO_SECRET',
+  'MONGO_SESSION_SECRET',
+  'LIMIT_MAX_CONCURRENT',
+  'LIMIT_MIN_TIME_MS',
+]
   .forEach((key) => {
     if (!(key in process.env)) {
       console.error(`Please provide a ${key} in your .env file.`);
