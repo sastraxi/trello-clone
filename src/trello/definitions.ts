@@ -28,10 +28,17 @@ export interface Card {
 
 export interface TrelloApi {
   me: () => Promise<any>;
+
   boards: () => Promise<Board[]>;
-  lists: (boardId: string) => Promise<any[]>;
-  archiveList: (listId: string) => Promise<void>;
+
   deleteAllCards: (boardId: string) => Promise<number>;
   cloneCard: (cardId: string, targetListId: string, cardFacets: CardFacet[]) => Promise<void>;
+  
+  lists: (boardId: string) => Promise<any[]>;
   createList: (boardId: string, name: string, pos?: any) => Promise<string>;
+  archiveList: (listId: string) => Promise<void>;
+
+  createWebhook: (boardId: string, description?: string) => Promise<string>;
+  deleteWebhook: (webhookId: string) => Promise<any>;
+  setWebhookActive: (webhookId: string, active: boolean) => Promise<any>;
 }

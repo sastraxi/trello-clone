@@ -11,7 +11,7 @@
   ],
   "addons": ["mongolab"],
   "env": {
-    "FRONTEND_URL": {
+    "URL": {
       "description": "Deployed URL of this app (without trailing slash!)",
       "required": true
     },

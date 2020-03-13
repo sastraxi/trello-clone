@@ -5,6 +5,7 @@ import pick from 'lodash.pick';
 import TrelloApi from '../trello';
 import { Store } from '../util/secret-store';
 import { Application } from 'express';
+import deployedUrl from '../util/url';
 
 const PROFILE_FIELDS = [
   'id',
@@ -13,16 +14,12 @@ const PROFILE_FIELDS = [
   'fullName',
 ];
 
-const CALLBACK_URL = process.env.FRONTEND_URL
-  ? `${process.env.FRONTEND_URL}/auth/callback`
-  : `http://localhost:${process.env.PORT}/auth/callback`;
-
 export default (app: Application, tokenStore: Store) => {
   // set up our integration with Trello, and define what happens when Trello redirects back to us
   passport.use(new TrelloStrategy({
       consumerKey: process.env.TRELLO_KEY,
       consumerSecret: process.env.TRELLO_SECRET,
-      callbackURL: CALLBACK_URL,
+      callbackURL: `${deployedUrl}/auth/callback`,
       trelloParams: {
         scope: 'read,write',
         name: 'trello-clone',
