@@ -32,13 +32,13 @@ export const put = async (path: string, query?: object) => {
 export const post = async (path: string, query?: object) => {
   const url = makeUrl(path);
   await limiter.schedule(() => Promise.resolve());
-  if (!query) return request.post(url).redirects(0);
-  return request.post(url).query(query).redirects(0);
+  if (!query) return request.post(url);
+  return request.post(url).query(query);
 };
 
 export const del = async (path: string, query?: object) => {
   const url = makeUrl(path);
   await limiter.schedule(() => Promise.resolve());
   if (!query) return request.delete(url);
-  return request.delete(path).query(query);
+  return request.delete(url).query(query);
 };
