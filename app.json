@@ -3,5 +3,14 @@
   "description": "This project allows you to sync a subset of cards from one board to another.",
   "repository": "https://github.com/sastraxi/trello-clone",
   "logo": "https://node-js-sample.herokuapp.com/node.png",
-  "keywords": ["node", "express"]
+  "keywords": ["node", "express"],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "zidizei/typescript"
+    }
+  ]
+
 }
