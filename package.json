@@ -7,15 +7,20 @@
   "author": "Cameron Gorrie <sastraxi@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node --files src/server",
+    "watch": "concurrently \"npm run ts:watch\" \"npm run serve\"",
+    "ts:watch": "tsc -w",
+    "ts:build": "tsc",
+    "build": "npm run ts:build",
+    "serve": "nodemon dist/server.js",
+    "start": "npm run build && npm run prod:serve",
     "dev": "./node_modules/nodemon/bin/nodemon.js",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "tslint": "tslint -c tslint.json -p tsconfig.json"
   },
   "dependencies": {
     "@types/bluebird": "^3.5.30",
     "@types/connect-mongodb-session": "^0.0.2",
-    "@types/express-session": "^1.15.16",
     "@types/mongodb": "^3.5.2",
     "@types/mustache-express": "^1.2.1",
     "@types/passport": "^1.0.2",
@@ -23,7 +28,8 @@
     "@types/cors": "^2.8.6",
     "@types/debug": "^4.1.5",
     "@types/dotenv": "^8.2.0",
-    "@types/express": "4.17.3",
+    "@types/express": "4.17.0",
+    "@types/express-session": "1.17.0",
     "@types/lodash.flatmap": "^4.5.6",
     "@types/lodash.pick": "^4.4.6",
     "@types/lodash.some": "^4.6.6",
@@ -35,8 +41,8 @@
     "cors": "^2.8.5",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.0",
+    "express": "4.17.0",
+    "express-session": "1.17.0",
     "lodash.flatmap": "^4.5.0",
     "lodash.pick": "^4.4.0",
     "lodash.some": "^4.6.0",
@@ -52,6 +58,7 @@
     "dotenv-cli": "^3.1.0",
     "nodemon": "^2.0.2",
     "tslint": "^6.0.0",
+    "concurrently": "^5.1.0",
     "tslint-config-airbnb": "^5.11.2"
   }
 }

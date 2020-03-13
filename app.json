@@ -5,16 +5,11 @@
   "logo": "https://node-js-sample.herokuapp.com/node.png",
   "keywords": ["node", "express"],
   "buildpacks": [
-	{
-	  "url": "heroku/nodejs"
-	},
-	{
-	  "url": "zidizei/typescript"
-	}
+    {
+      "url": "heroku/nodejs"
+    }
   ],
-  "addons": [
-    "mongolab"
-  ],
+  "addons": ["mongolab"],
   "env": {
     "SESSION_SECRET": {
       "description": "A secret key for verifying the integrity of signed cookies.",
