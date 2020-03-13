@@ -12,7 +12,7 @@
   "addons": ["mongolab"],
   "env": {
     "FRONTEND_URL": {
-      "description": "Deployed URL of this app (see also https://stackoverflow.com/a/26703011)",
+      "description": "Deployed URL of this app (without trailing slash!)",
       "required": true
     },
     "SESSION_SECRET": {
