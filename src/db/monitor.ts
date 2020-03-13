@@ -1,8 +1,8 @@
 import { Db } from 'mongodb';
 
-const WATCH_COLLECTION = 'watch';
+const COLLECTION = 'monitor';
 
-export interface Watch {
+export interface Monitor {
   id: string;
   webhookId: string;
   boardId: string;
@@ -10,16 +10,16 @@ export interface Watch {
 }
 
 export default (db: Db) => ({
-  find: (webhookId: string): Promise<Watch> =>
-    db.collection(WATCH_COLLECTION)
+  find: (webhookId: string): Promise<Monitor> =>
+    db.collection(COLLECTION)
       .findOne({ webhookId })
       .then(({ _id, ...doc }) => ({
         id: _id,
         ...doc,
       })),
 
-  all: (): Promise<Watch[]> =>
-    db.collection(WATCH_COLLECTION)
+  all: (): Promise<Monitor[]> =>
+    db.collection(COLLECTION)
       .find()
       .toArray()
       .then(docs => docs
@@ -28,8 +28,8 @@ export default (db: Db) => ({
           ...doc,
         }))),
 
-  create: async (webhookId: string, boardId: string, enabled: boolean): Promise<Watch> => {
-    const r = await db.collection(WATCH_COLLECTION)
+  create: async (webhookId: string, boardId: string, enabled: boolean): Promise<Monitor> => {
+    const r = await db.collection(COLLECTION)
       .insertOne({
         webhookId,
         boardId,
@@ -44,7 +44,7 @@ export default (db: Db) => ({
   },
 
   delete: async (webhookId: string): Promise<boolean> => {
-    const { deletedCount } = await db.collection(WATCH_COLLECTION).deleteOne({ webhookId });
+    const { deletedCount } = await db.collection(COLLECTION).deleteOne({ webhookId });
     return deletedCount === 1;
   },
 });
