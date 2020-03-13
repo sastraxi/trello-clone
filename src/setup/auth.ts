@@ -13,12 +13,16 @@ const PROFILE_FIELDS = [
   'fullName',
 ];
 
+const CALLBACK_URL = process.env.FRONTEND_URL
+  ? `${process.env.FRONTEND_URL}/auth/callback`
+  : `http://localhost:${process.env.PORT}/auth/callback`;
+
 export default (app: Application, tokenStore: Store) => {
   // set up our integration with Trello, and define what happens when Trello redirects back to us
   passport.use(new TrelloStrategy({
       consumerKey: process.env.TRELLO_KEY,
       consumerSecret: process.env.TRELLO_SECRET,
-      callbackURL: `http://localhost:${process.env.PORT}/auth/callback`,
+      callbackURL: CALLBACK_URL,
       trelloParams: {
         scope: 'read,write',
         name: 'trello-clone',

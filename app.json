@@ -11,6 +11,10 @@
   ],
   "addons": ["mongolab"],
   "env": {
+    "FRONTEND_URL": {
+      "description": "Deployed URL of this app (see also https://stackoverflow.com/a/26703011)",
+      "required": true
+    },
     "SESSION_SECRET": {
       "description": "A secret key for verifying the integrity of signed cookies.",
       "generator": "secret"

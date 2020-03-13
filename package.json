@@ -13,7 +13,7 @@
     "build": "npm run ts:build",
     "serve": "nodemon dist/server.js",
     "prod:serve": "node dist/server.js",
-    "start": "npm run build && npm run prod:serve",
+    "start": "npm run prod:serve",
     "dev": "./node_modules/nodemon/bin/nodemon.js",
     "test": "jest",
     "test:watch": "jest --watch",
