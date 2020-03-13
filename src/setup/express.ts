@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Application } from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -10,7 +10,7 @@ import { databaseUrl, connectionOptions } from '../util/mongo-client';
 const MongoStore = ConnectMongodbSession(session);
 const MONGO_SESSION_COLLECTION = "sessions";
 
-export default () => {
+export default (): Application => {
   const app = express();
 
   app.use(session({

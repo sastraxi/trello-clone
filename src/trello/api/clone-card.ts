@@ -24,14 +24,14 @@ const fetchCard = (token: string, cardId: string) =>
   }).then(res => res.body);
 
 interface ChecklistItem {
-  id: string,
-  name: string, 
-  idChecklist: string,
-  state: CompletionStatus,
-  pos: number,
-  due?: any,
-  nameData?: any,
-  idMember?: string
+  id: string;
+  name: string;
+  idChecklist: string;
+  state: CompletionStatus;
+  pos: number;
+  due?: any;
+  nameData?: any;
+  idMember?: string;
 }
 
 const checklistItemMatchPredicate =

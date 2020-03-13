@@ -4,7 +4,7 @@ import pick from 'lodash.pick';
 
 import TrelloApi from '../trello';
 import { Store } from '../util/secret-store';
-import { IRouter } from 'express';
+import { Application } from 'express';
 
 const PROFILE_FIELDS = [
   'id',
@@ -13,7 +13,7 @@ const PROFILE_FIELDS = [
   'fullName',
 ];
 
-export default (app: IRouter, tokenStore: Store) => {
+export default (app: Application, tokenStore: Store) => {
   // set up our integration with Trello, and define what happens when Trello redirects back to us
   passport.use(new TrelloStrategy({
       consumerKey: process.env.TRELLO_KEY,

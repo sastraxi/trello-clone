@@ -5,6 +5,7 @@ export default (token: string) => (boardId: string): Promise<any[]> =>
     key: process.env.TRELLO_KEY,
     token,
     cards: 'open',
+    // eslint-disable-next-line @typescript-eslint/camelcase
     card_fields: 'id,labels',
     filter: 'open',
     fields: 'name,pos',

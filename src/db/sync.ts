@@ -4,11 +4,11 @@ import { Board } from '../trello/definitions';
 const SYNC_COLLECTION = 'sync';
 
 export interface Sync {
-  id: string,
-  source: Board,
-  target: Board,
-  labels: string[],
-  lastSync?: number
+  id: string;
+  source: Board;
+  target: Board;
+  labels: string[];
+  lastSync?: number;
 }
 
 export default (db: Db) => ({

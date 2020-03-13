@@ -1,8 +1,8 @@
-import { IRouter } from "express";
+import { Application } from "express";
 
 import TrelloApi from '../trello';
 
-export default (app: IRouter) =>
+export default (app: Application) =>
   app.use((req, res, next) => {
     if (!req.user) {
       return res.redirect('/auth/login');

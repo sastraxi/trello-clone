@@ -3,9 +3,9 @@ interface StringMap {
 }
 
 export interface Store {
-  set: (key: string, secret: string) => Promise<void>,
-  get: (key: string) => Promise<string>,
-  remove: (key: string) => Promise<boolean>,
+  set: (key: string, secret: string) => Promise<void>;
+  get: (key: string) => Promise<string>;
+  remove: (key: string) => Promise<boolean>;
 }
 
 export default (storeName: string): Store => {
