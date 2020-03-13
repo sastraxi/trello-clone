@@ -11,6 +11,11 @@ export interface Sync {
   lastSync?: number;
 }
 
+const fromDb = ({ _id, ...doc }: any) => ({
+  id: _id,
+  ...doc,
+});
+
 export default (db: Db) => ({
   get: (id: string): Promise<Sync> =>
     db.collection(SYNC_COLLECTION)
@@ -20,15 +25,17 @@ export default (db: Db) => ({
         ...doc,
       })),
 
+  allForSource: (sourceId: string): Promise<Sync[]> =>
+    db.collection(SYNC_COLLECTION)
+      .find({ source: { id: sourceId }})
+      .toArray()
+      .then(docs => docs.map(fromDb)),
+
   all: (): Promise<Sync[]> =>
     db.collection(SYNC_COLLECTION)
       .find()
       .toArray()
-      .then(docs => docs
-        .map(({ _id, ...doc }) => ({
-          id: _id,
-          ...doc,
-        }))),
+      .then(docs => docs.map(fromDb)),
 
   create: async (source: Board, target: Board, labels: string[]): Promise<Sync> => {
     const r = await db.collection(SYNC_COLLECTION)
