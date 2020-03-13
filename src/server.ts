@@ -16,7 +16,6 @@ const tokenStore = SecretStore('tokens');
   'SESSION_SECRET',
   'TRELLO_KEY',
   'TRELLO_SECRET',
-  'MONGO_SESSION_SECRET',
   'LIMIT_MAX_CONCURRENT',
   'LIMIT_MIN_TIME_MS',
 ]
