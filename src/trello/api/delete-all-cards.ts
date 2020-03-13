@@ -3,7 +3,7 @@ import { get, del } from '../throttled-request';
 
 export default (token: string) =>
   async (boardId: string): Promise<number> => {
-    const cards = await get(`https://api.trello.com/1/boards/${boardId}/cards`, {
+    const cards = await get(`/1/boards/${boardId}/cards`, {
       key: process.env.TRELLO_KEY,
       token,
       fields: 'id',
@@ -11,7 +11,7 @@ export default (token: string) =>
     }).then(res => res.body);
 
     const responses = await Promise.all(cards.map((card: Card) =>
-      del(`https://api.trello.com/1/cards/${card.id}`, {
+      del(`/1/cards/${card.id}`, {
         key: process.env.TRELLO_KEY,
         token,
       })

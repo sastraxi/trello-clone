@@ -4,7 +4,7 @@ import { Board } from '../definitions';
 import { get } from '../throttled-request';
 
 export default (token: string) => (): Promise<Board[]> =>
-  get('https://api.trello.com/1/members/me/boards', {
+  get('/1/members/me/boards', {
     key: process.env.TRELLO_KEY,
     token,
   })

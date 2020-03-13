@@ -16,7 +16,7 @@ const hasAny = (list: any[], sought: any[]) =>
   some(list, x => sought.indexOf(x) !== -1);
 
 const fetchCard = (token: string, cardId: string) =>
-  get(`https://api.trello.com/1/cards/${cardId}`, {
+  get(`/1/cards/${cardId}`, {
     key: process.env.TRELLO_KEY,
     token,
     fields: 'due,dueComplete',
@@ -45,7 +45,7 @@ const extractChecklistItemsFromCard = (card: any): ChecklistItem[] =>
 
 export default (token: string) =>
   async (sourceCardId: string, targetListId: string, cardFacets: CardFacet[]) => {
-    const newCardId = await post('https://api.trello.com/1/cards', {
+    const newCardId = await post('/1/cards', {
       key: process.env.TRELLO_KEY,
       token,
       keepFromSource: cardFacets.join(','),
@@ -84,7 +84,7 @@ export default (token: string) =>
               console.error(`Could not find a matching source card for checklist item ${sourceItem.id}!`);
               return undefined;
             }
-            return put(`https://api.trello.com/1/cards/${newCard.id}/checkItem/${newItem.id}`, {
+            return put(`/1/cards/${newCard.id}/checkItem/${newItem.id}`, {
               key: process.env.TRELLO_KEY,
               token,
               state: CompletionStatus.complete,
@@ -96,7 +96,7 @@ export default (token: string) =>
 
     // similar to the above, due dates are not marked as "complete" either
     if (newCard.due && hasAny(cardFacets, [CardFacet.all, CardFacet.due])) {
-      await put(`https://api.trello.com/1/cards/${newCard.id}`, {
+      await put(`/1/cards/${newCard.id}`, {
         key: process.env.TRELLO_KEY,
         token,
         dueComplete: sourceCard.dueComplete,

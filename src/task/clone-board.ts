@@ -42,6 +42,8 @@ export default (trello: TrelloApi) => async (sourceId: string, targetId: string,
       .map(list => trello.createList(targetBoard.id, list.name, list.pos))
   );
 
+  // console.log(JSON.stringify(targetLists, null, 2));
+
   // FIXME: for now, just re-fetch the lists so we have an up-to-date name-to-id mapping
   const finalLists = await trello.lists(targetBoard.id);
   const targetListIdFromName: StringMap = {};
