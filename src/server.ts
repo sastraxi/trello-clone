@@ -65,8 +65,8 @@ app.post('/sync/new', async (req, res) => {
 
   // FIXME: shouldn't have to keep re-fetching
   const boards = await req.trello.boards();
-  const source = boards.find(board => board.id === sourceId);
-  const target = boards.find(board => board.id === targetId);
+  const source = boards.find((board: any) => board.id === sourceId);
+  const target = boards.find((board: any) => board.id === targetId);
 
   const client = await MongoClient();
   {
