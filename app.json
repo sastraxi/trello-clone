@@ -5,12 +5,36 @@
   "logo": "https://node-js-sample.herokuapp.com/node.png",
   "keywords": ["node", "express"],
   "buildpacks": [
-    {
-      "url": "heroku/nodejs"
+	{
+	  "url": "heroku/nodejs"
+	},
+	{
+	  "url": "zidizei/typescript"
+	}
+  ],
+  "addons": [
+    "mongolab"
+  ],
+  "env": {
+    "SESSION_SECRET": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
     },
-    {
-      "url": "zidizei/typescript"
+    "TRELLO_KEY": {
+      "description": "Trello API key",
+      "required": true
+    },
+    "TRELLO_SECRET": {
+      "description": "Trello API secret",
+      "required": true
+    },
+    "LIMIT_MAX_CONCURRENT": {
+      "description": "Maximum number of in-flight requests to the Trello API at a given time",
+      "value": "1"
+    },
+    "LIMIT_MIN_TIME_MS": {
+      "description": "Milliseconds to wait between sending requests to the Trello API",
+      "value": "150"
     }
-  ]
-
+  }
 }
