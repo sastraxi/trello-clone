@@ -2,8 +2,44 @@
 
   <h1>Trello Clone / Sync</h1>
   <h3>Logged in as {{ user.username }}</h3>
+  <form action="/monitor/new" method="get">
+    <input type="submit" value="Monitor board..." />
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <td>Monitored Board</td>
+        <td>Delay in seconds</td>
+        <td>Scheduled for</td>
+      </tr>
+    </thead>
+    <tbody>
+      {{ #monitors }}
+        <tr>
+          <td>
+            <a target="_blank" href="{{ board.url }}">{{ board.name }}</a>
+          </td>
+          <td>
+            {{ scheduledAt }}
+            {{ ^scheduledAt }}--{{ /scheduledAt }}
+          </td>
+          <td>
+            <form action="/monitor/delete/{{ id }}" method="post">
+              <input type="submit" value="Remove" />
+            </form>
+            {{ ^^scheduledAt }}
+              <form action="/sync/{{ id }}" method="post">
+                <input type="submit" value="Sync now" />
+              </form>
+            {{ /scheduledAt }}
+          </td>
+        </tr>
+      {{ /monitors }}
+    </tbody>
+  </table>
+
   <form action="/sync/new" method="get">
-    <input type="submit" value="Setup new sync" />
+    <input type="submit" value="Setup new sync..." />
   </form>
   <table>
     <thead>

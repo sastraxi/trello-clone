@@ -1,16 +1,15 @@
 import 'dotenv/config';
 
-import SecretStore from './util/secret-store';
-import MongoClient from './util/mongo-client';
+import getMongoClient from './util/mongo-client';
 
 import setupAuth from './setup/auth';
 import setupExpress from './setup/express';
 import setupTrello from './setup/trello';
 
 import SyncModel from './db/sync';
+import MonitorModel from './db/monitor';
 import CloneBoard from './task/clone-board';
-
-const tokenStore = SecretStore('tokens');
+import { Board } from './trello/definitions';
 
 [
   'SESSION_SECRET',
@@ -27,21 +26,37 @@ const tokenStore = SecretStore('tokens');
   });
 
 const app = setupExpress();
-setupAuth(app, tokenStore);
+setupAuth(app);
 setupTrello(app);
 
 app.get('/', async (req, res) => {
-  const client = await MongoClient();
+  const client = await getMongoClient();
   {
-    const Sync = SyncModel(client.db());
+    const db = client.db();
+    const Sync = SyncModel(db);
+    const Monitor = MonitorModel(db);
     res.render('index', {
       title: 'Trello Sync / Clone',
       user: req.user,
       syncs: await Sync.all(),
+      monitors: await Monitor.all(),
     });
   }
   client.close();
 }); 
+
+app.get('/monitor/new', async (req, res) => {
+  return res.render('new-monitor', {
+    title: 'New Monitored Board',
+    user: req.user,
+    boards: await req.trello.boards(),
+  });
+});
+
+app.post('/monitor/new', async (req, res) => {
+  const { boardId, delaySeconds } = req.body;
+  // next up!
+});
 
 app.get('/sync/new', async (req, res) => {
   return res.render('new-sync', {
@@ -53,8 +68,8 @@ app.get('/sync/new', async (req, res) => {
 
 app.post('/sync/new', async (req, res) => {
   const {
-    source: sourceId,
-    target: targetId,
+    sourceId,
+    targetId,
     label,
   } = req.body;
   
@@ -64,10 +79,10 @@ app.post('/sync/new', async (req, res) => {
 
   // FIXME: shouldn't have to keep re-fetching
   const boards = await req.trello.boards();
-  const source = boards.find((board: any) => board.id === sourceId);
-  const target = boards.find((board: any) => board.id === targetId);
+  const source = boards.find((board: Board) => board.id === sourceId);
+  const target = boards.find((board: Board) => board.id === targetId);
 
-  const client = await MongoClient();
+  const client = await getMongoClient();
   {
     const Sync = SyncModel(client.db());
     await Sync.create(source, target, [label]);
@@ -81,7 +96,7 @@ app.post('/sync/:id', async (req, res) => {
   const { id } = req.params;
   const cloneBoard = CloneBoard(req.trello);
 
-  const client = await MongoClient();
+  const client = await getMongoClient();
   {
     const Sync = SyncModel(client.db());
     const sync = await Sync.get(id);
@@ -103,7 +118,7 @@ app.post('/sync/:id', async (req, res) => {
 app.post('/sync/delete/:id', async (req, res) => {
   const { id } = req.params;
 
-  const client = await MongoClient();
+  const client = await getMongoClient();
   {
     const Sync = SyncModel(client.db());
     await Sync.delete(id);
@@ -111,14 +126,6 @@ app.post('/sync/delete/:id', async (req, res) => {
   client.close();
 
   return res.redirect('/');
-});
-
-app.get('/me', async (req, res) => {
-  return res.status(200).json(await req.trello.me());
-});
-
-app.get('/boards', async (req, res) => {
-  return res.status(200).json(await req.trello.boards());
 });
 
 const port = process.env.PORT || 3000;

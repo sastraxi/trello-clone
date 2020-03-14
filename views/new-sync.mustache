@@ -1,18 +1,18 @@
 {{ >header }}
 
-  <h1>Trello Clone / Sync</h1>
+  <h1>Create Sync</h1>
   <h3>Logged in as {{ user.username }}</h3>
   <form action="/sync/new" method="post">
 
-    <label for="source">Source</label>
-    <select name="source">
+    <label for="sourceId">Source</label>
+    <select name="sourceId">
       {{ #boards }}
         <option value="{{ id }}">{{ name }}</option>
       {{ /boards }}
     </select>
 
-    <label for="target">Target</label>
-    <select name="target">
+    <label for="targetId">Target</label>
+    <select name="targetId">
       {{ #boards }}
         <option value="{{ id }}">{{ name }}</option>
       {{ /boards }}

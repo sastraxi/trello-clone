@@ -1,20 +1,23 @@
+import { Application } from 'express';
 import passport from 'passport';
 import { Strategy as TrelloStrategy } from 'passport-trello';
 import pick from 'lodash.pick';
 
 import TrelloApi from '../trello';
-import { Store } from '../util/secret-store';
-import { Application } from 'express';
 import deployedUrl from '../util/url';
+import getMongoClient from '../util/mongo-client';
+
+import UserModel, { User } from '../db/user';
 
 const PROFILE_FIELDS = [
   'id',
+  'email',
+  'fullName',
   'username',
   'avatarUrl',
-  'fullName',
 ];
 
-export default (app: Application, tokenStore: Store) => {
+export default (app: Application): void => {
   // set up our integration with Trello, and define what happens when Trello redirects back to us
   passport.use(new TrelloStrategy({
       consumerKey: process.env.TRELLO_KEY,
@@ -29,12 +32,12 @@ export default (app: Application, tokenStore: Store) => {
     async (token: string, tokenSecret: string, _profile: any, cb: Function) => {
       try {
         // FIXME: _profile has me() in it so we don't need to call the API ourselves
-        await tokenStore.set(token, tokenSecret);
         const trello = TrelloApi(token);
         const profile = await trello.me();
         cb(null, {
           ...pick(profile, PROFILE_FIELDS),
           token,
+          tokenSecret,
         });
       } catch (err) {
         console.error('error in strategy', err);
@@ -43,8 +46,20 @@ export default (app: Application, tokenStore: Store) => {
   ));
 
   // allow users to be stored in / retrieved from the session
-  passport.serializeUser((profile: object, cb) => cb(null, JSON.stringify(profile)));
-  passport.deserializeUser((json: string, cb) => cb(null, JSON.parse(json)));
+  passport.serializeUser((user: User, cb) => cb(null, user.id));
+  passport.deserializeUser(async (userId: string, cb) => {
+    const client = await getMongoClient();
+    try {
+      const db = client.db();
+      const User = UserModel(db);
+      cb(null, User.find(userId));
+    } catch (err) {
+      console.error('could not deserialize user', err);
+      cb(err);
+    } finally {
+      client.close();
+    }
+  });
 
   app.use(passport.initialize());
   app.use(passport.session());
