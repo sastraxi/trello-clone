@@ -5,6 +5,7 @@ import getMongoClient from './util/mongo-client';
 import setupAuth from './setup/auth';
 import setupExpress from './setup/express';
 import setupTrello from './setup/trello';
+import setupDb from './setup/db';
 
 import SyncModel from './db/sync';
 import MonitorModel from './db/monitor';
@@ -31,7 +32,7 @@ setupTrello(app);
 
 app.get('/', async (req, res) => {
   const client = await getMongoClient();
-  {
+  try {
     const db = client.db();
     const Sync = SyncModel(db);
     const Monitor = MonitorModel(db);
@@ -41,8 +42,11 @@ app.get('/', async (req, res) => {
       syncs: await Sync.all(),
       monitors: await Monitor.all(),
     });
+  } catch (err) {
+    console.log('err', err);
+  } finally {
+    client.close();
   }
-  client.close();
 }); 
 
 app.get('/monitor/new', async (req, res) => {
@@ -64,11 +68,12 @@ app.post('/monitor/new', async (req, res) => {
     `trello-sync monitor webhook for ${board.name} created by ${req.user.username}`);
 
   const client = await getMongoClient();
-  {
+  try {
     const Monitor = MonitorModel(client.db());
     await Monitor.create(req.user.id, webhookId, board, +delaySeconds);
+  } finally {
+    client.close();
   }
-  client.close();
 
   return res.redirect('/');
 });
@@ -98,11 +103,12 @@ app.post('/sync/new', async (req, res) => {
   const target = boards.find((board: Board) => board.id === targetId);
 
   const client = await getMongoClient();
-  {
+  try {
     const Sync = SyncModel(client.db());
     await Sync.create(source, target, [label]);
+  } finally {
+    client.close();
   }
-  client.close();
 
   return res.redirect('/');
 });
@@ -112,7 +118,7 @@ app.post('/sync/:id', async (req, res) => {
   const cloneBoard = CloneBoard(req.trello);
 
   const client = await getMongoClient();
-  {
+  try {
     const Sync = SyncModel(client.db());
     const sync = await Sync.get(id);
     console.log(`Syncing ${sync.source.name} to ${sync.target.name}...`);
@@ -124,8 +130,9 @@ app.post('/sync/:id', async (req, res) => {
       console.error(err);
       console.log("error; see above");
     }
+  } finally {
+    client.close();
   }
-  client.close();
 
   return res.redirect('/');
 });
@@ -134,15 +141,18 @@ app.post('/sync/delete/:id', async (req, res) => {
   const { id } = req.params;
 
   const client = await getMongoClient();
-  {
+  try {
     const Sync = SyncModel(client.db());
     await Sync.delete(id);
+  } finally {
+    client.close();
   }
-  client.close();
 
   return res.redirect('/');
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () =>
-  console.log(`visit http://localhost:${port} to get started`));
+setupDb().then(() => {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () =>
+    console.log(`visit http://localhost:${port} to get started`));
+});

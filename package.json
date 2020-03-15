@@ -14,7 +14,7 @@
     "serve": "nodemon dist/server.js",
     "prod:serve": "node dist/server.js",
     "start": "npm run prod:serve",
-    "dev": "./node_modules/nodemon/bin/nodemon.js",
+    "dev": "ts-node --files src/server.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "eslint": "eslint"

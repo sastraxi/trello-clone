@@ -1,21 +1,11 @@
 import { Application } from 'express';
 import passport from 'passport';
 import { Strategy as TrelloStrategy } from 'passport-trello';
-import pick from 'lodash.pick';
 
-import TrelloApi from '../trello';
 import deployedUrl from '../util/url';
 import getMongoClient from '../util/mongo-client';
 
 import UserModel, { User } from '../db/user';
-
-const PROFILE_FIELDS = [
-  'id',
-  'email',
-  'fullName',
-  'username',
-  'avatarUrl',
-];
 
 export default (app: Application): void => {
   // set up our integration with Trello, and define what happens when Trello redirects back to us
@@ -29,16 +19,28 @@ export default (app: Application): void => {
         expiration: 'never',
       }
     },
-    async (token: string, tokenSecret: string, _profile: any, cb: Function) => {
+    async (token: string, tokenSecret: string, profile: any, cb: Function) => {
       try {
-        // FIXME: _profile has me() in it so we don't need to call the API ourselves
-        const trello = TrelloApi(token);
-        const profile = await trello.me();
-        cb(null, {
-          ...pick(profile, PROFILE_FIELDS),
-          token,
-          tokenSecret,
-        });
+        const client = await getMongoClient();
+        try {
+          const db = client.db();
+          const Users = UserModel(db);
+          const user: User = {
+            id: profile._json.id,
+            email: profile._json.email,
+            fullName: profile._json.fullName,
+            username: profile._json.username,
+            avatarUrl: profile._json.avatarUrl,
+            token,
+            tokenSecret,
+          };
+          cb(null, await Users.create(user));
+        } catch (err) {
+          console.error('could not create user', err);
+          cb(err);
+        } finally {
+          client.close();
+        }
       } catch (err) {
         console.error('error in strategy', err);
       }
@@ -52,7 +54,7 @@ export default (app: Application): void => {
     try {
       const db = client.db();
       const User = UserModel(db);
-      cb(null, User.find(userId));
+      cb(null, await User.find(userId));
     } catch (err) {
       console.error('could not deserialize user', err);
       cb(err);

@@ -1,4 +1,4 @@
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 
 const COLLECTION = 'user';
 
@@ -13,7 +13,7 @@ export interface User {
 }
 
 const toDb = ({ id, ...restUser }: User): object => ({
-  _id: id,
+  _id: new ObjectId(id),
   ...restUser,
 });
 
@@ -23,9 +23,14 @@ const fromDb = ({ _id, ...restUser }: any): User => ({
 });
 
 export default (db: Db) => ({
+  setup: async (): Promise<any> => {
+    await db.collection(COLLECTION).createIndex({ email: 1 }, { sparse: true });
+    return db.collection(COLLECTION).createIndex({ scheduledAt: 1 });
+  },
+
   find: (id: string): Promise<User> =>
     db.collection(COLLECTION)
-      .findOne({ _id: id })
+      .findOne({ _id: new ObjectId(id) })
       .then(fromDb),
 
   count: (): Promise<number> =>
@@ -33,10 +38,7 @@ export default (db: Db) => ({
       .count(),
 
   create: async (user: User): Promise<User> => {
-    // TODO: is there a better place for these createindex calls?
-    await db.collection(COLLECTION).createIndex({ email: 1 }, { unique: true });
-    await db.collection(COLLECTION).createIndex({ scheduledAt: 1 });
-    await db.collection(COLLECTION).insertOne(toDb);
+    await db.collection(COLLECTION).insertOne(toDb(user));
     return user;
   },
 

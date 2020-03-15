@@ -8,7 +8,7 @@ import ConnectMongodbSession from 'connect-mongodb-session';
 import { databaseUrl, connectionOptions } from '../util/mongo-client';
 
 const MongoStore = ConnectMongodbSession(session);
-const MONGO_SESSION_COLLECTION = "sessions";
+const MONGO_SESSION_COLLECTION = "session";
 
 export default (): Application => {
   const app = express();

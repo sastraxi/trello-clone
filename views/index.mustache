@@ -27,11 +27,6 @@
             <form action="/monitor/delete/{{ id }}" method="post">
               <input type="submit" value="Remove" />
             </form>
-            {{ ^^scheduledAt }}
-              <form action="/sync/{{ id }}" method="post">
-                <input type="submit" value="Sync now" />
-              </form>
-            {{ /scheduledAt }}
           </td>
         </tr>
       {{ /monitors }}

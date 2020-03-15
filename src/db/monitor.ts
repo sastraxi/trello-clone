@@ -21,6 +21,11 @@ const fromDb = ({ _id, ...doc }: any): Monitor => ({
 });
 
 export default (db: Db) => ({
+  setup: async (): Promise<any> => {
+    await db.collection(COLLECTION).createIndex({ webhookId: 1 }, { unique: true });
+    return db.collection(COLLECTION).createIndex({ scheduledAt: 1 });
+  },
+
   find: (webhookId: string): Promise<Monitor> =>
     db.collection(COLLECTION)
       .findOne({ webhookId })
@@ -39,8 +44,6 @@ export default (db: Db) => ({
     delaySeconds: number = DEFAULT_DELAY_SECONDS
   ): Promise<Monitor> => {
     // TODO: is there a better place for these createindex calls?
-    await db.collection(COLLECTION).createIndex({ webhookId: 1 }, { unique: true });
-    await db.collection(COLLECTION).createIndex({ scheduledAt: 1 });
     const r = await db.collection(COLLECTION)
       .insertOne({
         userId,
