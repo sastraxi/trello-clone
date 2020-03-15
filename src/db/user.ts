@@ -5,9 +5,11 @@ const COLLECTION = 'user';
 export interface User {
   id: string;
   email: string;
+  fullName?: string;
+  username: string;
+  avatarUrl?: string;
   token: string;
   tokenSecret: string;
-
 }
 
 const toDb = ({ id, ...restUser }: User): object => ({

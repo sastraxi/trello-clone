@@ -55,7 +55,22 @@ app.get('/monitor/new', async (req, res) => {
 
 app.post('/monitor/new', async (req, res) => {
   const { boardId, delaySeconds } = req.body;
-  // next up!
+  
+  // FIXME: shouldn't have to keep re-fetching; at least just get the one
+  const boards = await req.trello.boards();
+  const board = boards.find((board: Board) => board.id === boardId);
+
+  const webhookId = await req.trello.createWebhook(board.id,
+    `trello-sync monitor webhook for ${board.name} created by ${req.user.username}`);
+
+  const client = await getMongoClient();
+  {
+    const Monitor = MonitorModel(client.db());
+    await Monitor.create(req.user.id, webhookId, board, +delaySeconds);
+  }
+  client.close();
+
+  return res.redirect('/');
 });
 
 app.get('/sync/new', async (req, res) => {

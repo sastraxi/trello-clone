@@ -1,16 +1,11 @@
 import { TrelloApi } from "./trello/definitions";
 
-/*
-export interface Session {
-  id: string;
-  destroy(callback: (err: any) => void): void;
-}*/
+import { User as UserModel } from './db/user';
 
 declare global {
   namespace Express {
-    interface User {
-      id: string;
-      token: string;
+    interface User extends UserModel {
+      __phony: string; // FIXME: not sure how else to make this work
     }
   }
 }
