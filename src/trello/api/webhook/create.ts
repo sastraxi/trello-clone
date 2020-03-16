@@ -15,7 +15,5 @@ export default (token: string) => (boardId: string, description?: string): Promi
     callbackURL: `${deployedUrl}/webhook/${boardId}`,
     active: true,
   };
-  console.log('query is');
-  console.log(JSON.stringify(query, null, 2));
   return post(`/1/webhooks`, query).then(r => r.body.id);
 };

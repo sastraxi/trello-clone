@@ -37,6 +37,7 @@ export default (): Application => {
   );
 
   app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
   
   app.engine('mustache', mustacheExpress());
   app.set('view engine', 'mustache');

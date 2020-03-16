@@ -1,5 +1,6 @@
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { Board } from '../trello/definitions';
+import { Moment } from 'moment';
 
 const COLLECTION = 'monitor';
 
@@ -13,7 +14,6 @@ export interface Monitor {
 }
 
 const DEFAULT_DELAY_SECONDS = 600; // 10 minutes
-const SEC_TO_MS = 1000; // mongodb interprets numbers as milliseconds when adding to dates
 
 const fromDb = ({ _id, ...doc }: any): Monitor => ({
   id: _id,
@@ -23,8 +23,14 @@ const fromDb = ({ _id, ...doc }: any): Monitor => ({
 export default (db: Db) => ({
   setup: async (): Promise<any> => {
     await db.collection(COLLECTION).createIndex({ webhookId: 1 }, { unique: true });
+    await db.collection(COLLECTION).createIndex({ "board.id": 1 });
     return db.collection(COLLECTION).createIndex({ scheduledAt: 1 });
   },
+
+  findByBoard: (boardId: string): Promise<Monitor> =>
+    db.collection(COLLECTION)
+      .findOne({ "board.id": boardId })
+      .then(fromDb),
 
   find: (webhookId: string): Promise<Monitor> =>
     db.collection(COLLECTION)
@@ -66,16 +72,11 @@ export default (db: Db) => ({
    * The board this monitor is watching has just been updated;
    * schedule a sync for some time in the future
    */
-  schedule: async (webhookId: string): Promise<any> => 
+  schedule: async (id: string, scheduledAt: Moment): Promise<any> => 
     db.collection(COLLECTION)
       .updateOne(
-        { webhookId },
-        { scheduledAt: {
-          $add: [
-            new Date(),
-            { $multiply: [ SEC_TO_MS, "$delaySeconds" ] },
-          ],
-        }}
+        { _id: new ObjectId(id) },
+        { $set: { scheduledAt: scheduledAt.toDate() } }
       ),
 
   due: async (): Promise<Monitor[]> =>

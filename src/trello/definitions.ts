@@ -26,6 +26,31 @@ export interface Card {
   id: string;
 }
 
+export interface WebhookBody {
+  action: {
+    id: string;
+    idMemberCreator: string;
+    data: {
+      board: {
+        name: string;
+        id: string;
+      };
+    };
+    type: string;
+    date: string;
+    memberCreator: {
+      id: string;
+      avatarHash: string;
+      fullName: string;
+      initials: string;
+      username: string;
+    };
+  };
+  model: {
+    id: string;
+  };
+}
+
 export interface TrelloApi {
   me: () => Promise<any>;
 

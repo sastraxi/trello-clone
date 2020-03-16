@@ -1,11 +1,14 @@
 import 'dotenv/config';
+import moment from 'moment';
 
 import getMongoClient from './util/mongo-client';
 
-import setupAuth from './setup/auth';
+import setupAuth from './auth/setup';
 import setupExpress from './setup/express';
 import setupTrello from './setup/trello';
 import setupDb from './setup/db';
+
+import loggedIn from './auth/logged-in';
 
 import SyncModel from './db/sync';
 import MonitorModel from './db/monitor';
@@ -32,7 +35,7 @@ const app = setupExpress();
 setupAuth(app);
 setupTrello(app);
 
-app.get('/', async (req, res) => {
+app.get('/', loggedIn, async (req, res) => {
   const client = await getMongoClient();
   try {
     const db = client.db();
@@ -51,7 +54,7 @@ app.get('/', async (req, res) => {
   }
 }); 
 
-app.get('/monitor/new', async (req, res) => {
+app.get('/monitor/new', loggedIn, async (req, res) => {
   return res.render('new-monitor', {
     title: 'New Monitored Board',
     user: req.user,
@@ -59,7 +62,7 @@ app.get('/monitor/new', async (req, res) => {
   });
 });
 
-app.post('/monitor/new', async (req, res) => {
+app.post('/monitor/new', loggedIn, async (req, res) => {
   const { boardId, delaySeconds } = req.body;
   
   // FIXME: shouldn't have to keep re-fetching; at least just get the one
@@ -80,7 +83,39 @@ app.post('/monitor/new', async (req, res) => {
   return res.redirect('/');
 });
 
-app.get('/sync/new', async (req, res) => {
+const WEBHOOK_IPS = [
+  '107.23.104.115',
+  '107.23.149.70',
+  '54.152.166.250',
+  '54.164.77.56',
+  '54.209.149.230',
+];
+
+app.post('/webhook/:boardId', async (req, res) => {
+  const { boardId } = req.params;
+  
+  console.log(`Webhook for board:${boardId}!`);
+
+  if (!WEBHOOK_IPS.indexOf(req.ip)) {
+    return res.send(400).send(`${req.ip} not in webhook IP whitelist!`);
+  }
+
+  const client = await getMongoClient();
+  try {
+    const Monitor = MonitorModel(client.db());
+    const monitor = await Monitor.findByBoard(boardId);
+    await Monitor.schedule(
+      monitor.id,
+      moment().add(monitor.delaySeconds, 'second'),
+    );
+  } finally {
+    client.close();
+  }
+
+  return res.status(200).send('ok');
+});
+
+app.get('/sync/new', loggedIn, async (req, res) => {
   return res.render('new-sync', {
     title: 'New Trello Sync',
     user: req.user,
@@ -88,7 +123,7 @@ app.get('/sync/new', async (req, res) => {
   });
 });
 
-app.post('/sync/new', async (req, res) => {
+app.post('/sync/new', loggedIn, async (req, res) => {
   const {
     sourceId,
     targetId,
@@ -115,7 +150,7 @@ app.post('/sync/new', async (req, res) => {
   return res.redirect('/');
 });
 
-app.post('/sync/:id', async (req, res) => {
+app.post('/sync/:id', loggedIn, async (req, res) => {
   const { id } = req.params;
   const cloneBoard = CloneBoard(req.trello);
 
@@ -139,7 +174,7 @@ app.post('/sync/:id', async (req, res) => {
   return res.redirect('/');
 });
 
-app.post('/sync/delete/:id', async (req, res) => {
+app.post('/sync/delete/:id', loggedIn, async (req, res) => {
   const { id } = req.params;
 
   const client = await getMongoClient();
