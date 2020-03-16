@@ -38,7 +38,11 @@ export default (db: Db) => ({
       .count(),
 
   create: async (user: User): Promise<User> => {
-    await db.collection(COLLECTION).insertOne(toDb(user));
+    await db.collection(COLLECTION).replaceOne(
+      { _id: new ObjectId(user.id) },
+      toDb(user),
+      { upsert: true },
+    );
     return user;
   },
 

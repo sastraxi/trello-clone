@@ -12,6 +12,8 @@ import MonitorModel from './db/monitor';
 import CloneBoard from './task/clone-board';
 import { Board } from './trello/definitions';
 
+import deployedUrl from './util/url';
+
 [
   'SESSION_SECRET',
   'TRELLO_KEY',
@@ -154,5 +156,5 @@ app.post('/sync/delete/:id', async (req, res) => {
 setupDb().then(() => {
   const port = process.env.PORT || 3000;
   app.listen(port, () =>
-    console.log(`visit http://localhost:${port} to get started`));
+    console.log(`visit ${deployedUrl} to get started`));
 });
