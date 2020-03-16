@@ -3,7 +3,7 @@ import { Application } from "express";
 import loggedIn from './auth/logged-in';
 
 import getRoot from './handler/root';
-import postIncomingWebhook from './handler/root';
+import postIncomingWebhook from './handler/incoming-webhook';
 import getMonitorCreate from './handler/monitor/create-get';
 import postMonitorCreate from './handler/monitor/create-post';
 import postMonitorDelete from './handler/monitor/delete';
