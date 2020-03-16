@@ -16,10 +16,8 @@ export default (app: Application): void => {
   app.get('/', loggedIn, getRoot);
 
   app.post('/webhook/:boardId', postIncomingWebhook);
-  app.head('/webhook/:boardId', (req, res) => {
-    console.log('all good');
-    return res.status(200).send('ok');
-  })
+  app.head('/webhook/:boardId', (req, res) => res.status(200).send('ok'));
+  // ^ FIXME: responds to HEAD with 404 without this...
 
   app.get('/monitor/new', loggedIn, getMonitorCreate);  
   app.post('/monitor/new', loggedIn, postMonitorCreate);
