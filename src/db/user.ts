@@ -46,8 +46,11 @@ export default (db: Db) => ({
     return user;
   },
 
-  delete: async (webhookId: string): Promise<boolean> => {
-    const { deletedCount } = await db.collection(COLLECTION).deleteOne({ webhookId });
+  delete: async (id: string): Promise<boolean> => {
+    const { deletedCount } = await db.collection(COLLECTION)
+      .deleteOne({
+        _id: new ObjectId(id),
+      });
     return deletedCount === 1;
   },
 });

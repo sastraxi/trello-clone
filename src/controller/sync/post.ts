@@ -20,7 +20,7 @@ export default async (req: Request, res: Response): Promise<void> => {
       console.log('Done!');
     } catch (err) {
       console.error(err);
-      console.log("error; see above");
+      console.error("error; see above");
     }
   } finally {
     client.close();

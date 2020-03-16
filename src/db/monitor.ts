@@ -32,9 +32,9 @@ export default (db: Db) => ({
       .findOne({ "board.id": boardId })
       .then(fromDb),
 
-  find: (webhookId: string): Promise<Monitor> =>
+  find: (id: string): Promise<Monitor> =>
     db.collection(COLLECTION)
-      .findOne({ webhookId })
+      .findOne({ _id: new ObjectId(id) })
       .then(fromDb),
 
   all: (): Promise<Monitor[]> =>

@@ -18,7 +18,7 @@ export default async (req: Request, res: Response): Promise<void> => {
       monitors: await Monitor.all(),
     });
   } catch (err) {
-    console.log('err', err);
+    console.error('err', err);
   } finally {
     client.close();
   }
