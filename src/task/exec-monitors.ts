@@ -5,9 +5,9 @@ import getMongoClient from '../util/mongo-client';
 import TrelloApi from '../trello';
 import cloneBoard from './clone-board';
 
-import MonitorModel, { Monitor } from '../db/monitor';
-import UserModel, { User } from '../db/user';
-import SyncModel, { Sync } from '../db/sync';
+import MonitorModel from '../db/monitor';
+import UserModel from '../db/user';
+import SyncModel from '../db/sync';
 
 export default async () => {
   const client = await getMongoClient();
@@ -18,22 +18,21 @@ export default async () => {
     const Sync = SyncModel(db);
 
     const monitors = await Monitor.due();
+    await Bluebird.map(monitors, m => Monitor.clearSchedule(m.id));
 
-    const clonesAndTouches = flatMap(monitors, async (monitor: Monitor) => {        
+    for (const monitor of monitors) {      
       const user = await User.find(monitor.userId); // we'll use the api token of the user who set up this monitor 
       const syncs = await Sync.allForSource(monitor.board.id); // all syncs that involve this board as the source
       const trello = TrelloApi(user.token);
-      return flatMap(syncs, sync => [
-        cloneBoard(trello)(
+      for (const sync of syncs) {
+        await cloneBoard(trello)(
           sync.source.id,
           sync.target.id,
           sync.labels,
-        ),
-        Sync.touch(sync.id),
-      ]);
-    });
-
-    return Bluebird.mapSeries(clonesAndTouches, x => x);
+        );
+        await Sync.touch(sync.id);
+      }
+    }
   } catch (err) {
     console.error('exec-monitors', err);
     throw new Error(err);

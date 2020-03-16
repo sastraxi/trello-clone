@@ -79,6 +79,13 @@ export default (db: Db) => ({
         { $set: { scheduledAt: scheduledAt.toDate() } }
       ),
 
+  clearSchedule: (id: string): Promise<any> =>
+    db.collection(COLLECTION)
+      .updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { scheduledAt: null } }
+      ),
+
   due: async (): Promise<Monitor[]> =>
     db.collection(COLLECTION)
       .find({ scheduledAt: { "$lte": new Date() } })

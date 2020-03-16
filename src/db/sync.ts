@@ -27,7 +27,7 @@ export default (db: Db) => ({
 
   allForSource: (sourceId: string): Promise<Sync[]> =>
     db.collection(SYNC_COLLECTION)
-      .find({ source: { id: sourceId }})
+      .find({ "source.id": sourceId })
       .toArray()
       .then(docs => docs.map(fromDb)),
 

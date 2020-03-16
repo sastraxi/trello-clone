@@ -3,6 +3,7 @@ import 'dotenv/config';
 import setupAuth from './auth/setup';
 import setupExpress from './setup/express';
 import setupTrello from './setup/trello';
+import setupCron from './setup/cron';
 import setupDb from './setup/db';
 import connectRoutes from './routes';
 
@@ -31,3 +32,5 @@ setupDb().then(() => {
   app.listen(port, () =>
     console.log(`visit ${deployedUrl} to get started`));
 });
+
+setupCron();
