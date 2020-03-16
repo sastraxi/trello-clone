@@ -29,3 +29,19 @@ table tbody tr + tr {
 table form {
   display: inline-block;
 }
+
+table {
+  margin-bottom: 2rem;
+}
+
+nav {
+  margin-bottom: 2rem;
+}
+
+nav h3:first-child {
+  margin-right: 1rem;
+}
+
+nav > * {
+  display: inline-block;
+}

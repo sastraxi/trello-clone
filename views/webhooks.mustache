@@ -1,0 +1,41 @@
+{{ >header }}
+
+  <h1>Webhooks</h1>
+  <nav>
+    <h3>Logged in as {{ user.username }}</h3>
+    <form action="/" method="get">
+      <input type="submit" value="Back home" />
+    </form>
+  </nav>
+  <table>
+    <thead>
+      <tr>
+        <td>ID</td>
+        <td>Description</td>
+        <td>Callback URL</td>
+        <td>Actions</td>
+      </tr>
+    </thead>
+    <tbody>
+      {{ #webhooks }}
+        <tr>
+          <td>
+            {{ id }}
+          </td>
+          <td>
+            {{ description }}
+          </td>
+          <td>
+            <a href="{{ callbackURL }}">{{ callbackURL }}</a>
+          </td>
+          <td>
+            <form action="/webhooks/delete/{{ id }}" method="post">
+              <input type="submit" value="Delete" />
+            </form>
+          </td>
+        </tr>
+      {{ /webhooks }}
+    </tbody>
+  </table>
+
+{{ >footer }}

@@ -1,10 +1,20 @@
 {{ >header }}
 
   <h1>Trello Clone / Sync</h1>
-  <h3>Logged in as {{ user.username }}</h3>
-  <form action="/monitor/new" method="get">
-    <input type="submit" value="Monitor board..." />
-  </form>
+
+  <nav>
+    <h3>Logged in as {{ user.username }}</h3>
+    <form action="/monitor/new" method="get">
+      <input type="submit" value="Monitor board..." />
+    </form>
+    <form action="/sync/new" method="get">
+      <input type="submit" value="Setup new sync..." />
+    </form>
+    <form action="/webhooks" method="get">
+      <input type="submit" value="Webhooks" />
+    </form>
+  </nav>
+
   <table>
     <thead>
       <tr>
@@ -37,9 +47,6 @@
     </tbody>
   </table>
 
-  <form action="/sync/new" method="get">
-    <input type="submit" value="Setup new sync..." />
-  </form>
   <table>
     <thead>
       <tr>

@@ -11,6 +11,8 @@ import getSyncCreate from './controller/sync/create-get';
 import postSyncCreate from './controller/sync/create-post';
 import postSyncDelete from './controller/sync/delete';
 import postSync from './controller/sync/post';
+import getWebhooks from './controller/webhooks/get';
+import postWebhookDelete from './controller/webhooks/delete';
 
 export default (app: Application): void => {
   app.get('/', loggedIn, getRoot);
@@ -27,4 +29,7 @@ export default (app: Application): void => {
   app.post('/sync/new', loggedIn, postSyncCreate);
   app.post('/sync/delete/:id', loggedIn, postSyncDelete);
   app.post('/sync/:id', loggedIn, postSync);
+
+  app.get('/webhooks', loggedIn, getWebhooks);
+  app.post('/webhooks/delete/:id', loggedIn, postWebhookDelete);
 };

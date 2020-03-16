@@ -26,7 +26,13 @@ export interface Card {
   id: string;
 }
 
-export interface WebhookBody {
+export interface Webhook {
+  id: string;
+  callbackURL: string;
+  description: string;
+}
+
+export interface WebhookRequestBody {
   action: {
     id: string;
     idMemberCreator: string;
@@ -63,6 +69,7 @@ export interface TrelloApi {
   createList: (boardId: string, name: string, pos?: any) => Promise<string>;
   archiveList: (listId: string) => Promise<void>;
 
+  webhooks: () => Promise<Webhook[]>;
   createWebhook: (boardId: string, description?: string) => Promise<string>;
   deleteWebhook: (webhookId: string) => Promise<any>;
   setWebhookActive: (webhookId: string, active: boolean) => Promise<any>;

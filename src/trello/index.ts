@@ -8,6 +8,7 @@ import deleteAllCards from './api/delete-all-cards';
 import cloneCard from './api/clone-card';
 import createList from './api/create-list';
 
+import webhooks from './api/webhook/all';
 import createWebhook from './api/webhook/create';
 import deleteWebhook from './api/webhook/delete';
 import setWebhookActive from './api/webhook/set-active';
@@ -24,6 +25,7 @@ export default (token: string): TrelloApi => ({
   archiveList: archiveList(token),
   createList: createList(token),
 
+  webhooks: webhooks(token),
   createWebhook: createWebhook(token),
   deleteWebhook: deleteWebhook(token),
   setWebhookActive: setWebhookActive(token),
