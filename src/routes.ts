@@ -2,20 +2,24 @@ import { Application } from "express";
 
 import loggedIn from './auth/logged-in';
 
-import getRoot from './handler/root';
-import postIncomingWebhook from './handler/incoming-webhook';
-import getMonitorCreate from './handler/monitor/create-get';
-import postMonitorCreate from './handler/monitor/create-post';
-import postMonitorDelete from './handler/monitor/delete';
-import getSyncCreate from './handler/sync/create-get';
-import postSyncCreate from './handler/sync/create-post';
-import postSyncDelete from './handler/sync/delete';
-import postSync from './handler/sync/post';
+import getRoot from './controller/root';
+import postIncomingWebhook from './controller/incoming-webhook';
+import getMonitorCreate from './controller/monitor/create-get';
+import postMonitorCreate from './controller/monitor/create-post';
+import postMonitorDelete from './controller/monitor/delete';
+import getSyncCreate from './controller/sync/create-get';
+import postSyncCreate from './controller/sync/create-post';
+import postSyncDelete from './controller/sync/delete';
+import postSync from './controller/sync/post';
 
 export default (app: Application): void => {
   app.get('/', loggedIn, getRoot);
 
   app.post('/webhook/:boardId', postIncomingWebhook);
+  app.head('/webhook/:boardId', (req, res) => {
+    console.log('all good');
+    return res.status(200).send('ok');
+  })
 
   app.get('/monitor/new', loggedIn, getMonitorCreate);  
   app.post('/monitor/new', loggedIn, postMonitorCreate);

@@ -25,7 +25,6 @@ import deployedUrl from './util/url';
 const app = setupExpress();
 setupAuth(app);
 setupTrello(app);
-
 connectRoutes(app);
 setupDb().then(() => {
   const port = process.env.PORT || 3000;
