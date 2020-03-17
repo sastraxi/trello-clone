@@ -14,7 +14,7 @@
     "serve": "nodemon dist/server.js",
     "prod:serve": "node dist/server.js",
     "start": "npm run prod:serve",
-    "dev": "ts-node --files src/server.ts",
+    "dev": "ts-node-dev --files src/server.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "eslint": "eslint"
@@ -65,6 +65,7 @@
     "concurrently": "^5.1.0",
     "dotenv-cli": "^3.1.0",
     "eslint": "^6.8.0",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "ts-node-dev": "^1.0.0-pre.44"
   }
 }
