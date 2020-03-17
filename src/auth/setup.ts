@@ -43,15 +43,18 @@ export default (app: Application): void => {
 
           // once any invite code exists, require a valid one
           const isReturning = await Users.exists(user.id);
+          const numInviteCodes = await InviteCode.count();
           if (!isReturning) {
-            const numInviteCodes = await InviteCode.count();
             if (numInviteCodes > 0 && !req.session[USER_WAS_INVITED_KEY]) {
               console.error('User was not invited');
               return cb("You must be invited to join this app!");
             }
-            if (numInviteCodes === 0) {
-              await InviteCode.generate();
-            }
+          }
+
+          // by putting this outside of the above if statement
+          // we can upgrade apps that existed before invites existed
+          if (numInviteCodes === 0) {
+            await InviteCode.generate();
           }
           
           cb(null, await Users.upsert(user));
