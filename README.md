@@ -7,11 +7,7 @@ This project allows you to sync a subset of cards from one board to another, eit
 1. Open https://trello.com/app-key and take note of your API key and secret (scroll all the way down).
 2. Deploy your app on heroku by clicking the following button. For the deployed URL environment variable, use `https://[app-name].herokuapp.com`. Do not add a trailing slash!
 
-<p align="center">
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-</p>
+   [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 3. Add the deployed URL under Allowed Origins on https://trello.com/app-key. As with the deployed URL, do not include a trailing slash.
 
