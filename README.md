@@ -31,7 +31,7 @@ This project allows you to sync a subset of cards from one board to another, eit
 
 - The `/webhooks` route will allow you to manage *all* of your Trello webhooks, not just the ones created by (this instance of) trello-clone. 
 
-### Dev notes
+# Development notes
 
 - Typescript linting in 2020: https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/README.md
 
