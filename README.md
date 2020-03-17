@@ -11,9 +11,11 @@ This project allows you to sync a subset of cards from one board to another, eit
 
 3. Add the deployed URL under Allowed Origins on https://trello.com/app-key. As with the deployed URL, do not include a trailing slash.
 
+4. Visit `https://[app-name].herokuapp.com` in a browser.
+
 ### Using trello-clone
 
-- Visit the deployed URL to get started. You will be asked to authenticate via Trello: the authenticated token will be stored in a MongoDB collection, while the user ID you're logged in aswill be stored in a cookie.
+- You will need a Trello account; the authenticated token will be stored in a MongoDB collection along with your Trello profile.
 
 - The first user to authorize and log into this deployment of trello-clone will trigger the generation of an invitation code. Subsequent users will have to visit the invite URL (available on the home page) in order to connect with this app instance
   
