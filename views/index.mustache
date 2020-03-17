@@ -13,6 +13,10 @@
     <form action="/webhooks" method="get">
       <input type="submit" value="Webhooks" />
     </form>
+    {{ #inviteUrl }}
+      <label for="inviteUrl">Invite URL</label>
+      <input name="inviteUrl" type="text" readonly="readonly" value="{{ inviteUrl }}" size="40" />
+    {{ /inviteUrl }}
   </nav>
 
   <table>

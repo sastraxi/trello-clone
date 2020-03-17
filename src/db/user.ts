@@ -28,6 +28,11 @@ export default (db: Db) => ({
     return db.collection(COLLECTION).createIndex({ scheduledAt: 1 });
   },
 
+  exists: (id: string): Promise<boolean> =>
+    db.collection(COLLECTION)
+      .countDocuments({ _id: new ObjectId(id )})
+      .then(x => x === 1),
+
   find: (id: string): Promise<User> =>
     db.collection(COLLECTION)
       .findOne({ _id: new ObjectId(id) })
@@ -35,9 +40,9 @@ export default (db: Db) => ({
 
   count: (): Promise<number> =>
     db.collection(COLLECTION)
-      .count(),
+      .countDocuments(),
 
-  create: async (user: User): Promise<User> => {
+  upsert: async (user: User): Promise<User> => {
     await db.collection(COLLECTION).replaceOne(
       { _id: new ObjectId(user.id) },
       toDb(user),
