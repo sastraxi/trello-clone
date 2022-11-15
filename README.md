@@ -21,7 +21,7 @@ This project allows you to sync a subset of cards from one board to another, eit
   
   - e.g. share it in slack, discord; wherever fine text is transmitted
 
-- The core `Sync` concept models a relationship `(course board, label colours) -> target board`. Any card with a label coloured with one of the synced label colours will be cloned onto the target board whenever that sync is performed.
+- The core `Sync` concept models a relationship `(source board, label colours) -> target board`. Any card with a label coloured with one of the synced label colours will be cloned onto the target board whenever that sync is performed.
 
   - Everything on the card is copied, with the exception of labels
 
